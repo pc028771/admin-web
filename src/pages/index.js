@@ -8,6 +8,7 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -27,10 +28,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
 
-  const handleDrawerOpen = isOpen => {
-    setOpen(isOpen);
-  };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -38,7 +35,7 @@ export default function Dashboard() {
   return (
     <Box>
       <Paper>
-        <AdminAppBar handleDrawerOpen={handleDrawerOpen} />
+        <AdminAppBar />
         <Drawer
           sx={{
             width: drawerWidth,
