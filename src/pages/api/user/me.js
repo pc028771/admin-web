@@ -2,8 +2,7 @@
 
 export default function handler(req, res) {
   return res.status(200).json({ name: 'John Doe' });
+  return res.status(401).send();
   if (Math.random() > 0.5) {
   }
-
-  res.status(401).send();
 }

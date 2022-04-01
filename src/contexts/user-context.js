@@ -35,7 +35,9 @@ const UserContextProvider = ({ children }) => {
     }
   };
 
-  useEffect(async () => {}, []);
+  useEffect(async () => {
+    getUser();
+  }, []);
 
   const contextValue = useMemo(
     () => ({
