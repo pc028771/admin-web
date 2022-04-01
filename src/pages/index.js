@@ -1,13 +1,14 @@
-import { Paper, Box } from '@mui/material';
-import { useContext } from 'react';
-import { UserContext } from '../contexts/user-context';
+import { Paper } from '@mui/material';
+import { getUser } from '../services/user';
+import DefaultLayout from '../components/DefaultLayout';
 
 const ResponsiveAppBar = () => {
-  const { user } = useContext(UserContext);
+  const { user, isLoading } = getUser();
+
   return (
-    <Box>
+    <DefaultLayout>
       <Paper sx={{ m: 2 }}>{JSON.stringify(user)}</Paper>
-    </Box>
+    </DefaultLayout>
   );
 };
 
