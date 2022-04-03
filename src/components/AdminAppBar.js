@@ -11,13 +11,13 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { getUser } from '../services/user';
+import { getMyProfile } from '../services/user';
 
 const pages = ['Productss', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-export default function AdminAppBar({ children }) {
-  const { user, isLoading } = getUser();
+export default function AdminAppBar() {
+  const { user, isLoading } = getMyProfile();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 

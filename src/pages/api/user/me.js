@@ -1,8 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import _ from 'lodash';
+import { users } from '../../../repositories/user';
 
 export default function handler(req, res) {
-  return res.status(200).json({ name: 'John Doe' });
-  return res.status(401).send();
-  if (Math.random() > 0.5) {
-  }
+  return res.json(_.find(users, { id: 1 }));
 }
