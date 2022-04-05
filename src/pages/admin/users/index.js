@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import { DataGrid, GridToolbarContainer } from '@mui/x-data-grid';
-import { getUsers } from '../services/user';
-import DefaultLayout from '../components/DefaultLayout';
-import DataGridActions, { renderCell } from '../components/DataGridActions';
+import { getUsers } from '../../../services/user';
+import DefaultLayout from '../../../components/DefaultLayout';
+import DataGridActions, { renderCell } from '../../../components/DataGridActions';
 
 const ResponsiveAppBar = () => {
   const { rows, isLoading } = getUsers();
@@ -34,7 +34,7 @@ const ResponsiveAppBar = () => {
 
     const { mutate } = useSWRConfig();
 
-    let response = await fetch(`api/admin/users/${newUser.id}`, {
+    let response = await fetch(`/api/admin/users/${newUser.id}`, {
       body: JSON.stringify(newUser),
       method: 'PUT',
       headers: {
@@ -42,7 +42,7 @@ const ResponsiveAppBar = () => {
       },
     });
 
-    mutate('api/admin/users');
+    mutate('/api/admin/users');
     return response.json();
   };
 

@@ -1,15 +1,13 @@
-import _ from 'lodash';
-import { users, fields } from '../../../../repositories/user';
+import { getUsers, createUser } from '../../../../repositories/user';
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  let users = [];
   switch (req.method) {
     case 'POST':
-      let body = _.defaults(req.body, {});
-      let newId = Math.max(...users.map(({ id }) => parseInt(id))) + 1;
-      let newUser = _.pick(body, fields);
-
-      users.push({ id: newId, ...newUser });
+      await createUser(req.body);
       break;
+    case 'GET':
+      users = await getUsers();
   }
 
   return res.json(users);

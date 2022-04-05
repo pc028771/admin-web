@@ -2,7 +2,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import fetcher from '../lib/fetcher';
 
 export const getMyProfile = () => {
-  const { data, error } = useSWR('api/user/me', fetcher);
+  const { data, error } = useSWR('/api/user/me', fetcher);
 
   return {
     user: data,
@@ -12,7 +12,7 @@ export const getMyProfile = () => {
 };
 
 export const getUserById = id => {
-  const { data, error } = useSWR(`api/admin/uses/${id}`, fetcher);
+  const { data, error } = useSWR(`/api/admin/uses/${id}`, fetcher);
 
   return {
     user: data,
@@ -22,23 +22,37 @@ export const getUserById = id => {
 };
 
 export const getUsers = () => {
-  const { data, error } = useSWR(`api/admin/users`, fetcher);
+  const { data, error } = useSWR(`/api/admin/users`, fetcher);
 
   return {
-    users: data,
+    ...data,
     isLoading: !error && !data,
     isError: error,
   };
 };
 
-export const createUser = newUser => {
+export const createUser = async newUser => {
   const { mutate } = useSWRConfig();
-  mutate('api/admin/users', async () => {
+  return await mutate('/api/admin/users', async () => {
     const updatedUsers = await fetch('/api/admin/users', {
       method: 'POST',
       body: JSON.stringify(newUser),
     });
 
+    return [...data, newUser];
+  });
+};
+
+export const updateUser = async newUser => {
+  const { mutate } = useSWRConfig();
+  const { id } = newUser;
+
+  return await mutate('/api/admin/users', async users => {
+    const updatedUsers = await fetch(`/api/admin/user/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(newUser),
+    });
+    let updatedIndex = _.findIndex(users, { id });
     return [...data, newUser];
   });
 };

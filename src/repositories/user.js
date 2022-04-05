@@ -1,22 +1,32 @@
-const users = [
-  {
-    id: 1,
-    account: 'pc028771@gmail.com',
-    lastName: 'Howard',
-    firstName: 'Yang',
-    email: 'pc028771@gmail.com',
-    mobile: '0920253845',
-  },
-  {
-    id: 2,
-    account: 'anonymous@gmail.com',
-    lastName: 'Anonymous',
-    firstName: 'Chane',
-    email: 'anonymous@gmail.com',
-    mobile: '0912345678',
-  },
-];
+import _ from 'lodash';
+import { User } from '../models';
 
-const fields = ['account', 'lastName', 'firstName', 'email', 'mobile'];
+export const fillable = ['account', 'lastName', 'firstName', 'email', 'mobile'];
 
-module.exports = { users, fields };
+export const getUsers = async () => {
+  return await User.findAndCountAll();
+};
+
+export const getUser = async id => {
+  return await User.findByPk(id);
+};
+
+export const createUser = async newUser => {
+  let { account } = newUser;
+  const [user, isCreated] = await User.findOrCreate({
+    where: { account },
+    defaults: _.pick(newUser, fillable),
+  });
+
+  if (!isCreated) {
+    return null;
+  }
+
+  return user;
+};
+
+export const updateUser = async (id, newUser) => {
+  newUser = _.pick(newUser, fillable);
+  let [affectedRows, user] = await User.update(newUser, { where: { id }, raw: true, returning: true });
+  return user[0];
+};
