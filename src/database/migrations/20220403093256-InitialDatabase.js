@@ -46,6 +46,10 @@ module.exports = {
         type: Sequelize.STRING(64),
         allowNull: false,
       },
+      key: {
+        type: Sequelize.STRING(32),
+        allowNull: false,
+      },
       type: {
         type: Sequelize.ENUM(['user', 'employee', 'manager', 'admin']),
         allowNull: false,
