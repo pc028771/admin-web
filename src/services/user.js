@@ -31,6 +31,16 @@ export const getUsers = () => {
   };
 };
 
+export const getRelations = () => {
+  const { data, error } = useSWR('/api/admin/users/relations', fetcher);
+
+  return {
+    ...data,
+    isLoading: !error && !data,
+    isError: error,
+  };
+};
+
 export const createUser = async newUser => {
   const { mutate } = useSWRConfig();
   return await mutate('/api/admin/users', async () => {

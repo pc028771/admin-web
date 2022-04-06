@@ -33,7 +33,8 @@ const renderCell = props => {
         color='primary'
         size='small'
         startIcon={<EditIcon />}
-        onClick={() => _.isFunction(onEditClick) && onEditClick(props)}
+        href={`/admin/users/${id}`}
+        // onClick={() => _.isFunction(onEditClick) && onEditClick(props)}
       >
         編輯
       </Button>

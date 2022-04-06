@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { User } from '../models';
+import { User, Role } from '../models';
 
 export const fillable = ['account', 'lastName', 'firstName', 'email', 'mobile'];
 
@@ -8,7 +8,7 @@ export const getUsers = async () => {
 };
 
 export const getUser = async id => {
-  return await User.findByPk(id);
+  return await User.findByPk(id, { include: Role });
 };
 
 export const createUser = async newUser => {

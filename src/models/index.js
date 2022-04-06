@@ -1,7 +1,7 @@
 'use strict';
 
-const fs = require('fs');
 const Sequelize = require('sequelize');
+const _ = require('lodash');
 
 const env = process.env.NODE_ENV || 'development';
 const { [env]: config } = require('../database/config.json');
@@ -13,10 +13,20 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-module.exports = {
-  sequelize,
-  Sequelize,
+const db = {
   User: require('./user')(sequelize, Sequelize.DataTypes),
   Role: require('./role')(sequelize, Sequelize.DataTypes),
   Privilege: require('./privilege')(sequelize, Sequelize.DataTypes),
+};
+
+_.forEach(db, model => {
+  if (model.associate) {
+    model.associate(db);
+  }
+});
+
+module.exports = {
+  sequelize,
+  Sequelize,
+  ...db,
 };
