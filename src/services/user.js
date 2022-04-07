@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import useSWR, { useSWRConfig } from 'swr';
 import fetcher from '../lib/fetcher';
 
@@ -31,8 +32,8 @@ export const getUsers = () => {
   };
 };
 
-export const getRelations = userId => {
-  const { data, error } = useSWR(`/api/admin/users/${userId}/relations`, fetcher);
+export const getRelations = id => {
+  const { data, error } = useSWR(() => (id ? `/api/admin/users/${id}/relations` : null), fetcher);
 
   return {
     ...data,

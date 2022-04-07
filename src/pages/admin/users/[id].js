@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -20,138 +20,121 @@ import DefaultLayout from '../../../components/DefaultLayout';
 import { getUsers, getRelations } from '../../../services/user';
 
 export default function UserForm() {
-  const {
-    query: { id },
-  } = useRouter();
-  const { rows, isLoading: isUserLoading } = getUsers();
-  const { roles, isLoading: isRelationLoading } = getRelations(id);
+  const { query } = useRouter();
+  const { rows } = getUsers();
+  const { roles } = getRelations(query.id);
   const { control, handleSubmit } = useForm();
-  const [userRoles, setUserRoles] = useState(roles);
-  const [user, setUser] = useState(null);
-  const onSubmit = data => console.log(data);
+  const [userRoles, setUserRoles] = useState();
+  const onSubmit = useCallback(data => console.log(data));
+  const id = parseInt(query.id);
+  const user = _.find(rows, { id });
 
   useEffect(() => {
     if (!_.isEmpty(roles)) {
-      let userRoles = _.filter(roles, ({ userRoles }) => !_.isEmpty(userRoles));
-      setUserRoles(userRoles.map(({ userRoles }) => userRoles[0].roleId));
+      let roleIds = roles.map(({ userRoles }) => userRoles[0]?.roleId);
+      setUserRoles(roleIds.filter(id => !isNaN(id)));
     }
   }, [roles]);
 
-  useEffect(() => {
-    if (!_.isEmpty(rows)) {
-      let user = _.find(rows, { id: parseInt(id) });
-      setUser(user);
-    }
-  }, [rows]);
-
-  if (isUserLoading || isRelationLoading) {
-    return null;
-  }
-
-  if (!_.isObject(userRoles) || !_.isObject(user)) {
-    return null;
-  }
-
   return (
     <DefaultLayout>
-      <Container maxWidth='md'>
-        <Box noValidate autoComplete='off'>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={2} sx={{ my: 1 }}>
-              <Grid item xs={12}>
-                <Typography variant='h4'>編輯使用者</Typography>
-              </Grid>
-              <Grid item xs={6} md={4}>
-                <Controller
-                  name='account'
-                  control={control}
-                  defaultValue={user.account ?? ''}
-                  rules={{ required: true }}
-                  render={({ field }) => <TextField {...field} label='帳號' type='email' fullWidth required />}
-                />
-              </Grid>
-              <Grid item xs={6} md={4}>
-                <Controller
-                  name='firstName'
-                  control={control}
-                  defaultValue={user.firstName ?? ''}
-                  rules={{}}
-                  render={({ field }) => <TextField {...field} label='姓' fullWidth />}
-                />
-              </Grid>
-              <Grid item xs={6} md={4}>
-                <Controller
-                  name='lastName'
-                  control={control}
-                  defaultValue={user.lastName ?? ''}
-                  rules={{}}
-                  render={({ field }) => <TextField {...field} label='名字' fullWidth />}
-                />
-              </Grid>
-              <Grid item xs={6} md={4}>
-                <Controller
-                  name='email'
-                  control={control}
-                  defaultValue={user.email ?? ''}
-                  rules={{}}
-                  render={({ field }) => <TextField {...field} label='Email' fullWidth />}
-                />
-              </Grid>
-              <Grid item xs={6} md={4}>
-                <FormControl fullWidth>
-                  <InputLabel id='role-label'>群組</InputLabel>
+      {_.isArray(userRoles) && (
+        <Container maxWidth='md'>
+          <Box noValidate autoComplete='off'>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Grid container spacing={2} sx={{ my: 1 }}>
+                <Grid item xs={12}>
+                  <Typography variant='h4'>編輯使用者</Typography>
+                </Grid>
+                <Grid item xs={6} md={4}>
                   <Controller
-                    name='roles'
+                    name='account'
                     control={control}
+                    defaultValue={user.account ?? ''}
                     rules={{ required: true }}
-                    defaultValue={userRoles}
-                    render={({ field }) => {
-                      return (
-                        <Select
-                          {...field}
-                          label='群組'
-                          labelId='role-label'
-                          multiple
-                          fullWidth
-                          onChange={e => {
-                            const value = e.target.value.sort();
-                            setUserRoles(value);
-                            field.onChange(value);
-                          }}
-                          renderValue={selected => {
-                            return (
+                    render={({ field }) => <TextField {...field} label='帳號' type='email' fullWidth required />}
+                  />
+                </Grid>
+                <Grid item xs={6} md={4}>
+                  <Controller
+                    name='firstName'
+                    control={control}
+                    defaultValue={user.firstName ?? ''}
+                    rules={{}}
+                    render={({ field }) => <TextField {...field} label='姓' fullWidth />}
+                  />
+                </Grid>
+                <Grid item xs={6} md={4}>
+                  <Controller
+                    name='lastName'
+                    control={control}
+                    defaultValue={user.lastName ?? ''}
+                    rules={{}}
+                    render={({ field }) => <TextField {...field} label='名字' fullWidth />}
+                  />
+                </Grid>
+                <Grid item xs={6} md={4}>
+                  <Controller
+                    name='email'
+                    control={control}
+                    defaultValue={user.email ?? ''}
+                    rules={{}}
+                    render={({ field }) => <TextField {...field} label='Email' fullWidth />}
+                  />
+                </Grid>
+                <Grid item xs={6} md={4}>
+                  <FormControl fullWidth>
+                    <InputLabel id='role-label'>群組</InputLabel>
+                    <Controller
+                      name='roles'
+                      control={control}
+                      rules={{ required: true }}
+                      defaultValue={userRoles}
+                      render={({ field }) => {
+                        return (
+                          <Select
+                            {...field}
+                            label='群組'
+                            labelId='role-label'
+                            multiple
+                            fullWidth
+                            onChange={({ target: { value } }) => {
+                              setUserRoles(value.sort());
+                              field.onChange(value);
+                            }}
+                            renderValue={selected => (
                               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map(roleId => (
                                   <Chip key={roleId} label={_.get(_.find(roles, { id: roleId }), 'name')} />
                                 ))}
                               </Box>
-                            );
-                          }}
-                        >
-                          {roles.map(({ id: roleId, key, name }) => (
-                            <MenuItem key={key} value={roleId}>
-                              <Checkbox checked={userRoles.includes(roleId)} />
-                              <ListItemText primary={name} />
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      );
-                    }}
-                  />
-                </FormControl>
+                            )}
+                          >
+                            {roles.map(({ id, key, name }) => (
+                              <MenuItem key={key} value={id}>
+                                <Checkbox checked={userRoles.includes(id)} />
+                                <ListItemText primary={name} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        );
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-              <Button href='/admin/users' variant='outlined' sx={{ m: 1 }}>
-                取消
-              </Button>
-              <Button type='submit' variant='contained' sx={{ m: 1 }}>
-                儲存
-              </Button>
-            </Grid>
-          </form>
-        </Box>
-      </Container>
+              <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <Button href='/admin/users' variant='outlined' sx={{ m: 1 }}>
+                  取消
+                </Button>
+                <Button type='submit' variant='contained' sx={{ m: 1 }}>
+                  儲存
+                </Button>
+              </Grid>
+            </form>
+          </Box>
+        </Container>
+      )}
     </DefaultLayout>
   );
 }
