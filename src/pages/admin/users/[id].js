@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -14,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import DefaultLayout from '../../../components/DefaultLayout';
 import { getUsers, getRelations } from '../../../services/user';
 
@@ -22,15 +24,33 @@ export default function UserForm() {
     query: { id },
   } = useRouter();
   const { rows, isLoading: isUserLoading } = getUsers();
-  const { roles, isLoading: isRelationLoading } = getRelations();
+  const { roles, isLoading: isRelationLoading } = getRelations(id);
   const { control, handleSubmit } = useForm();
+  const [userRoles, setUserRoles] = useState(roles);
+  const [user, setUser] = useState(null);
   const onSubmit = data => console.log(data);
+
+  useEffect(() => {
+    if (!_.isEmpty(roles)) {
+      let userRoles = _.filter(roles, ({ userRoles }) => !_.isEmpty(userRoles));
+      setUserRoles(userRoles.map(({ userRoles }) => userRoles[0].roleId));
+    }
+  }, [roles]);
+
+  useEffect(() => {
+    if (!_.isEmpty(rows)) {
+      let user = _.find(rows, { id: parseInt(id) });
+      setUser(user);
+    }
+  }, [rows]);
 
   if (isUserLoading || isRelationLoading) {
     return null;
   }
-  let user = _.find(rows, { id: parseInt(id) });
-  console.log(user, roles);
+
+  if (!_.isObject(userRoles) || !_.isObject(user)) {
+    return null;
+  }
 
   return (
     <DefaultLayout>
@@ -45,7 +65,7 @@ export default function UserForm() {
                 <Controller
                   name='account'
                   control={control}
-                  defaultValue={user?.account ?? ''}
+                  defaultValue={user.account ?? ''}
                   rules={{ required: true }}
                   render={({ field }) => <TextField {...field} label='帳號' type='email' fullWidth required />}
                 />
@@ -54,7 +74,7 @@ export default function UserForm() {
                 <Controller
                   name='firstName'
                   control={control}
-                  defaultValue={user?.firstName ?? ''}
+                  defaultValue={user.firstName ?? ''}
                   rules={{}}
                   render={({ field }) => <TextField {...field} label='姓' fullWidth />}
                 />
@@ -63,7 +83,7 @@ export default function UserForm() {
                 <Controller
                   name='lastName'
                   control={control}
-                  defaultValue={user?.lastName ?? ''}
+                  defaultValue={user.lastName ?? ''}
                   rules={{}}
                   render={({ field }) => <TextField {...field} label='名字' fullWidth />}
                 />
@@ -72,7 +92,7 @@ export default function UserForm() {
                 <Controller
                   name='email'
                   control={control}
-                  defaultValue={user?.email ?? ''}
+                  defaultValue={user.email ?? ''}
                   rules={{}}
                   render={({ field }) => <TextField {...field} label='Email' fullWidth />}
                 />
@@ -83,18 +103,40 @@ export default function UserForm() {
                   <Controller
                     name='roles'
                     control={control}
-                    defaultValue={user?.roles ?? ''}
                     rules={{ required: true }}
-                    render={({ field }) => (
-                      <Select {...field} label='群組' labelId='role-label' fullWidth>
-                        {roles.map(({ id, key, name }) => (
-                          <MenuItem key={key} value={id}>
-                            <Checkbox checked={user.roles.indexOf(id) > -1} />
-                            <ListItemText primary={name} />
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    )}
+                    defaultValue={userRoles}
+                    render={({ field }) => {
+                      return (
+                        <Select
+                          {...field}
+                          label='群組'
+                          labelId='role-label'
+                          multiple
+                          fullWidth
+                          onChange={e => {
+                            const value = e.target.value.sort();
+                            setUserRoles(value);
+                            field.onChange(value);
+                          }}
+                          renderValue={selected => {
+                            return (
+                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map(roleId => (
+                                  <Chip key={roleId} label={_.get(_.find(roles, { id: roleId }), 'name')} />
+                                ))}
+                              </Box>
+                            );
+                          }}
+                        >
+                          {roles.map(({ id: roleId, key, name }) => (
+                            <MenuItem key={key} value={roleId}>
+                              <Checkbox checked={userRoles.includes(roleId)} />
+                              <ListItemText primary={name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      );
+                    }}
                   />
                 </FormControl>
               </Grid>
