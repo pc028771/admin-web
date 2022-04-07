@@ -10,13 +10,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsToMany(models.Role, { through: 'userRole', timestamps: false });
+      this.belongsToMany(models.Role, { through: models.UserRole, timestamps: false });
     }
   }
   User.init(
     {
       id: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -50,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'users',
+      freezeTableName: true,
     },
   );
   return User;

@@ -16,6 +16,7 @@ if (config.use_env_variable) {
 const db = {
   User: require('./user')(sequelize, Sequelize.DataTypes),
   Role: require('./role')(sequelize, Sequelize.DataTypes),
+  UserRole: require('./userRole')(sequelize, Sequelize.DataTypes),
   Privilege: require('./privilege')(sequelize, Sequelize.DataTypes),
 };
 

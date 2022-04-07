@@ -1,8 +1,9 @@
 'use strict';
 const { Model } = require('sequelize');
+const { User, Role } = require('.');
 
 module.exports = (sequelize, DataTypes) => {
-  class Privilege extends Model {
+  class UserRole extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,38 +11,39 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.User);
+      this.belongsTo(models.Role);
     }
   }
-  Privilege.init(
+
+  UserRole.init(
     {
-      id: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
+        references: {
+          model: User,
+          key: 'id',
+        },
       },
-      name: {
-        type: DataTypes.STRING(64),
+      roleId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-      },
-      type: {
-        type: DataTypes.ENUM(['user', 'employee', 'manager', 'admin']),
-        allowNull: false,
-      },
-      createdAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
+        primaryKey: true,
+        references: {
+          model: Role,
+          key: 'id',
+        },
       },
     },
     {
       sequelize,
-      modelName: 'Privilege',
+      modelName: 'userRole',
+      timestamps: false,
       freezeTableName: true,
     },
   );
-  return Privilege;
+
+  return UserRole;
 };
