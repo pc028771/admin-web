@@ -1,10 +1,10 @@
-import { getRoles } from '../../../../../repositories/roles';
+import { getRoles } from '../../../../repositories/roles';
 
 export default async function handler(req, res) {
   let {
       query: { id },
     } = req,
-    [roles] = await Promise.all([getRoles(id)]);
+    [roles] = await Promise.all([getRoles()]);
 
   let relations = { roles };
 

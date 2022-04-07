@@ -1,15 +1,6 @@
 import _ from 'lodash';
-import { Role, UserRole } from '../models';
+import { Role } from '../models';
 
-export const getRoles = async userId => {
-  return await Role.findAll({
-    include: {
-      model: UserRole,
-      where: { userId },
-      required: false,
-    },
-    attributes: {
-      exclude: ['createdAt', 'updatedAt'],
-    },
-  });
+export const getRoles = async () => {
+  return await Role.findAll();
 };

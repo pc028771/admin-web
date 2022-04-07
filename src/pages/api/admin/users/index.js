@@ -1,4 +1,4 @@
-import { getUsers, createUser } from '../../../../repositories/user';
+import { getUsers, createUser } from '../../../../repositories/users';
 
 export default async function handler(req, res) {
   let users = [];

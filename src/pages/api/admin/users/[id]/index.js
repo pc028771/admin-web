@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getUser, updateUser, fillable } from '../../../../../repositories/user';
+import { getUserWithRelations, updateUser, fillable } from '../../../../../repositories/users';
 
 export default async function handler(req, res) {
   let {
@@ -17,14 +17,14 @@ export default async function handler(req, res) {
         return res.status(404).send();
       }
       break;
-    case 'DELETE':
-      break;
     case 'GET':
-      user = await getUser(id);
+      user = await getUserWithRelations(id);
       if (!_.isObject(user)) {
         return res.status(404).send();
       }
-      return res.json(user);
+      break;
+    case 'DELETE':
+      break;
   }
 
   return res.json(user);

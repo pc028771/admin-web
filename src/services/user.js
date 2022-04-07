@@ -13,10 +13,10 @@ export const getMyProfile = () => {
 };
 
 export const getUserById = id => {
-  const { data, error } = useSWR(`/api/admin/uses/${id}`, fetcher);
+  const { data, error } = useSWR(id ? `/api/admin/users/${id}` : null, fetcher);
 
   return {
-    user: data,
+    ...data,
     isLoading: !error && !data,
     isError: error,
   };
@@ -32,8 +32,8 @@ export const getUsers = () => {
   };
 };
 
-export const getRelations = id => {
-  const { data, error } = useSWR(() => (id ? `/api/admin/users/${id}/relations` : null), fetcher);
+export const getRelations = () => {
+  const { data, error } = useSWR('/api/admin/users/relations', fetcher);
 
   return {
     ...data,
