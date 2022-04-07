@@ -31,8 +31,8 @@ export const getUsers = () => {
   };
 };
 
-export const getRelations = () => {
-  const { data, error } = useSWR('/api/admin/users/relations', fetcher);
+export const getRelations = userId => {
+  const { data, error } = useSWR(`/api/admin/users/${userId}/relations`, fetcher);
 
   return {
     ...data,
