@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return await Promise.all([
+    await Promise.all([
       queryInterface.bulkInsert('users', [
         {
           id: 1,
@@ -65,6 +65,9 @@ module.exports = {
           updatedAt: new Date(),
         },
       ]),
+    ]);
+
+    return await Promise.all([
       queryInterface.bulkInsert('userRole', [
         {
           userId: 1,
