@@ -8,11 +8,19 @@ export const getUsers = async () => {
 };
 
 export const getUserWithRelations = async userId => {
-  let [user, roles] = await Promise.all([User.findByPk(userId, { raw: true }), UserRole.findAll({ where: { userId }, raw: true })]);
+  let [user, userRole] = await Promise.all([
+    User.findByPk(userId),
+    UserRole.findAll({
+      where: { userId },
+      attributes: {
+        include: ['roleId'],
+      },
+    }),
+  ]);
 
   return {
     user,
-    userRole: _.map(roles, ({ roleId }) => roleId),
+    userRole: _.map(userRole, ({ roleId }) => roleId),
   };
 };
 
