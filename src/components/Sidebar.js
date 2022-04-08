@@ -9,6 +9,7 @@ export default function Sidebar() {
     <Drawer
       variant='permanent'
       sx={{
+        display: { xs: 'none', md: 'block' },
         width: drawerWidth,
         flexGrow: 0,
         flexShrink: 0,

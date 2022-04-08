@@ -10,6 +10,7 @@ import PageLayout from '../../../components/PageLayout';
 import DataGridActions, { renderCell } from '../../../components/DataGridActions';
 
 export default function UserDataGrid() {
+  const { mutate } = useSWRConfig();
   const { rows, isLoading } = getUsers();
   const [pageSize, setPageSize] = useState(25);
   DataGridActions.onEditClick = useCallback(({ id, row }) => {
@@ -35,8 +36,6 @@ export default function UserDataGrid() {
       return currentUser;
     }
 
-    const { mutate } = useSWRConfig();
-
     let response = await fetch(`/api/admin/users/${newUser.id}`, {
       body: JSON.stringify(newUser),
       method: 'PUT',
@@ -61,6 +60,12 @@ export default function UserDataGrid() {
         columns={columns}
         loading={isLoading}
         pageSize={pageSize}
+        filterModel={{
+          items: [
+            { columnField: 'firstName', operatorValue: 'contains', value: '3' },
+            { columnField: 'lastName', operatorValue: 'contains', value: '3asdfas' },
+          ],
+        }}
         rowsPerPageOptions={[10, 25, 50]}
         onPageSizeChange={newPageSize => setPageSize(newPageSize)}
         experimentalFeatures={{ newEditingApi: true }}
