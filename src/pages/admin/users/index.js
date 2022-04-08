@@ -7,7 +7,7 @@ import { getUsers } from '../../../services/user';
 import DefaultLayout from '../../../components/DefaultLayout';
 import DataGridActions, { renderCell } from '../../../components/DataGridActions';
 
-const ResponsiveAppBar = () => {
+export default function UserDataGrid() {
   const { rows, isLoading } = getUsers();
   DataGridActions.onEditClick = useCallback(({ id, row }) => {
     console.log(id, row);
@@ -47,28 +47,26 @@ const ResponsiveAppBar = () => {
   };
 
   if (isLoading) {
-    return <DefaultLayout />;
+    return null;
   }
 
   return (
-    <DefaultLayout>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        experimentalFeatures={{ newEditingApi: true }}
-        processRowUpdate={processRowUpdate}
-        components={{
-          Toolbar: () => (
-            <GridToolbarContainer>
-              <Button variant='contained' size='small' color='primary' startIcon={<AddIcon />}>
-                新增
-              </Button>
-            </GridToolbarContainer>
-          ),
-        }}
-      ></DataGrid>
-    </DefaultLayout>
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      experimentalFeatures={{ newEditingApi: true }}
+      processRowUpdate={processRowUpdate}
+      components={{
+        Toolbar: () => (
+          <GridToolbarContainer>
+            <Button variant='contained' size='small' color='primary' startIcon={<AddIcon />}>
+              新增
+            </Button>
+          </GridToolbarContainer>
+        ),
+      }}
+    ></DataGrid>
   );
-};
+}
 
-export default ResponsiveAppBar;
+UserDataGrid.getLayout = page => <DefaultLayout>{page}</DefaultLayout>;
