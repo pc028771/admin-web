@@ -1,14 +1,17 @@
 import { useSWRConfig } from 'swr';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
+import LinearProgress from '@mui/material/LinearProgress';
 import { DataGrid, GridToolbarContainer } from '@mui/x-data-grid';
 import { getUsers } from '../../../services/user';
-import DefaultLayout from '../../../components/DefaultLayout';
+import Layout from '../../../components/Layout';
+import PageLayout from '../../../components/PageLayout';
 import DataGridActions, { renderCell } from '../../../components/DataGridActions';
 
 export default function UserDataGrid() {
   const { rows, isLoading } = getUsers();
+  const [pageSize, setPageSize] = useState(25);
   DataGridActions.onEditClick = useCallback(({ id, row }) => {
     console.log(id, row);
   }, []);
@@ -51,22 +54,30 @@ export default function UserDataGrid() {
   }
 
   return (
-    <DataGrid
-      rows={rows}
-      columns={columns}
-      experimentalFeatures={{ newEditingApi: true }}
-      processRowUpdate={processRowUpdate}
-      components={{
-        Toolbar: () => (
-          <GridToolbarContainer>
-            <Button variant='contained' size='small' color='primary' startIcon={<AddIcon />}>
-              新增
-            </Button>
-          </GridToolbarContainer>
-        ),
-      }}
-    ></DataGrid>
+    <PageLayout pageTitle='使用者管理'>
+      <DataGrid
+        autoHeight
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        pageSize={pageSize}
+        rowsPerPageOptions={[10, 25, 50]}
+        onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+        experimentalFeatures={{ newEditingApi: true }}
+        processRowUpdate={processRowUpdate}
+        components={{
+          LoadingOverlay: LinearProgress,
+          Toolbar: () => (
+            <GridToolbarContainer>
+              <Button variant='contained' size='small' color='primary' startIcon={<AddIcon />} sx={{ mx: 0.5, mt: 1 }}>
+                新增
+              </Button>
+            </GridToolbarContainer>
+          ),
+        }}
+      ></DataGrid>
+    </PageLayout>
   );
 }
 
-UserDataGrid.getLayout = page => <DefaultLayout>{page}</DefaultLayout>;
+UserDataGrid.getLayout = page => <Layout>{page}</Layout>;

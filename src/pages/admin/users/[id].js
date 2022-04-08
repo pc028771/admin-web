@@ -16,7 +16,7 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import DefaultLayout from '../../../components/DefaultLayout';
+import Layout from '../../../components/Layout';
 import { getRelations, getUserById } from '../../../services/user';
 
 export default function UserForm() {
@@ -132,4 +132,4 @@ export default function UserForm() {
   );
 }
 
-UserForm.getLayout = page => <DefaultLayout>{page}</DefaultLayout>;
+UserForm.getLayout = page => <Layout>{page}</Layout>;

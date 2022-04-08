@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import { DataGrid, GridToolbarContainer } from '@mui/x-data-grid';
 import { getUsers } from '../services/user';
-import DefaultLayout from '../components/DefaultLayout';
+import Layout from '../components/Layout';
 import DataGridActions, { renderCell } from '../components/DataGridActions';
 
 const ResponsiveAppBar = () => {
@@ -47,11 +47,11 @@ const ResponsiveAppBar = () => {
   };
 
   if (isLoading) {
-    return <DefaultLayout />;
+    return <Layout />;
   }
 
   return (
-    <DefaultLayout>
+    <Layout>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -67,7 +67,7 @@ const ResponsiveAppBar = () => {
           ),
         }}
       ></DataGrid>
-    </DefaultLayout>
+    </Layout>
   );
 };
 
