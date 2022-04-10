@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -27,7 +27,9 @@ export default function UserForm() {
   const { user, userRole, isLoading: isUserLoading } = getUserById(id);
   const { roles, isLoading: isRelLoading } = getRelations();
   const { control, handleSubmit } = useForm();
-  const onSubmit = useCallback(data => console.log(data));
+  const onSubmit = useCallback(data => {
+    console.log(data);
+  });
 
   if (isUserLoading || isRelLoading) {
     return 'Loading';
@@ -45,7 +47,7 @@ export default function UserForm() {
               <Controller
                 name='account'
                 control={control}
-                defaultValue={user.account ?? ''}
+                defaultValue={user.account}
                 rules={{ required: true }}
                 render={({ field }) => <TextField {...field} label='帳號' type='email' fullWidth required />}
               />
@@ -54,7 +56,7 @@ export default function UserForm() {
               <Controller
                 name='firstName'
                 control={control}
-                defaultValue={user.firstName ?? ''}
+                defaultValue={user.firstName}
                 rules={{}}
                 render={({ field }) => <TextField {...field} label='姓' fullWidth />}
               />
@@ -63,7 +65,7 @@ export default function UserForm() {
               <Controller
                 name='lastName'
                 control={control}
-                defaultValue={user.lastName ?? ''}
+                defaultValue={user.lastName}
                 rules={{}}
                 render={({ field }) => <TextField {...field} label='名字' fullWidth />}
               />
@@ -72,7 +74,7 @@ export default function UserForm() {
               <Controller
                 name='email'
                 control={control}
-                defaultValue={user.email ?? ''}
+                defaultValue={user.email}
                 rules={{}}
                 render={({ field }) => <TextField {...field} label='Email' fullWidth />}
               />

@@ -20,22 +20,27 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      account: {
+      username: {
         type: DataTypes.STRING(320),
         allowNull: false,
         unique: true,
       },
-      firstName: {
-        type: DataTypes.STRING(32),
+      hash: {
+        type: DataTypes.STRING(64),
         allowNull: false,
+        unique: true,
       },
-      lastName: {
+      name: {
         type: DataTypes.STRING(32),
         allowNull: false,
       },
       email: {
         type: DataTypes.STRING(320),
         allowNull: false,
+      },
+      emailVerified: {
+        type: DataTypes.DATE,
+        field: 'email_verified',
       },
       createdAt: {
         allowNull: false,

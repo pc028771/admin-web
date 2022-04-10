@@ -60,7 +60,7 @@ export const updateUser = async newUser => {
 
   return await mutate('/api/admin/users', async users => {
     const updatedUsers = await fetch(`/api/admin/user/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(newUser),
     });
     let updatedIndex = _.findIndex(users, { id });

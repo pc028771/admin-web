@@ -20,12 +20,12 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
-        type: DataTypes.STRING(64),
+      type: {
+        type: DataTypes.ENUM(['page', 'api', 'action']),
         allowNull: false,
       },
-      type: {
-        type: DataTypes.ENUM(['user', 'employee', 'manager', 'admin']),
+      key: {
+        type: DataTypes.STRING(32),
         allowNull: false,
       },
       createdAt: {

@@ -6,19 +6,19 @@ module.exports = {
       queryInterface.bulkInsert('users', [
         {
           id: 1,
-          account: 'pc028771@gmail.com',
-          firstName: 'Howard',
-          lastName: 'Yang',
+          username: 'pc028771@gmail.com',
+          name: 'Howard Yang',
           email: 'pc028771@gmail.com',
+          hash: 'f01ee48070e5538c834cb35d1c9c67863aef20ede75b7531b3a17467b40e00ff',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           id: 2,
-          account: 'noel@novize.com.tw',
-          firstName: 'Noel',
-          lastName: 'Hsu',
+          username: 'noel@novize.com.tw',
+          name: 'Noel Hsu',
           email: 'noel@novize.com.tw',
+          hash: '',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -65,6 +65,29 @@ module.exports = {
           updatedAt: new Date(),
         },
       ]),
+      queryInterface.bulkInsert('privileges', [
+        {
+          id: 1,
+          type: 'page',
+          key: '/admin/users',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          type: 'page',
+          key: '/admin/roles',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 3,
+          type: 'page',
+          key: '/admin/privileges',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ]),
     ]);
 
     return await Promise.all([
@@ -76,6 +99,23 @@ module.exports = {
         {
           userId: 1,
           roleId: 2,
+        },
+      ]),
+      queryInterface.bulkInsert('rolePrivilege', [
+        {
+          roleId: 1,
+          privilegeId: 1,
+          acl: Sequelize.literal(`ARRAY['GET','POST','PATCH','DELETE']::"enum_rolePrivilege_acl"[]`),
+        },
+        {
+          roleId: 1,
+          privilegeId: 2,
+          acl: Sequelize.literal(`ARRAY['GET','POST','PATCH','DELETE']::"enum_rolePrivilege_acl"[]`),
+        },
+        {
+          roleId: 1,
+          privilegeId: 3,
+          acl: Sequelize.literal(`ARRAY['GET','POST','PATCH','DELETE']::"enum_rolePrivilege_acl"[]`),
         },
       ]),
     ]);

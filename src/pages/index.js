@@ -36,7 +36,7 @@ const ResponsiveAppBar = () => {
 
     let response = await fetch(`api/admin/users/${newUser.id}`, {
       body: JSON.stringify(newUser),
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'content-type': 'application/json',
       },

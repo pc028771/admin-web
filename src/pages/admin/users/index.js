@@ -38,7 +38,7 @@ export default function UserDataGrid() {
 
     let response = await fetch(`/api/admin/users/${newUser.id}`, {
       body: JSON.stringify(newUser),
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'content-type': 'application/json',
       },
@@ -60,12 +60,6 @@ export default function UserDataGrid() {
         columns={columns}
         loading={isLoading}
         pageSize={pageSize}
-        filterModel={{
-          items: [
-            { columnField: 'firstName', operatorValue: 'contains', value: '3' },
-            { columnField: 'lastName', operatorValue: 'contains', value: '3asdfas' },
-          ],
-        }}
         rowsPerPageOptions={[10, 25, 50]}
         onPageSizeChange={newPageSize => setPageSize(newPageSize)}
         experimentalFeatures={{ newEditingApi: true }}

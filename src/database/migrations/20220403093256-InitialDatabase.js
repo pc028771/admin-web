@@ -9,23 +9,25 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      account: {
+      username: {
         type: Sequelize.STRING(320),
         allowNull: false,
         unique: true,
       },
-      firstName: {
-        type: Sequelize.STRING(32),
-        allowNull: false,
-      },
-      lastName: {
-        type: Sequelize.STRING(32),
-        allowNull: false,
-      },
+      name: Sequelize.STRING(32),
       email: {
         type: Sequelize.STRING(320),
         allowNull: false,
       },
+      emailVerified: {
+        type: Sequelize.DATE,
+        field: 'email_verified',
+      },
+      hash: {
+        type: Sequelize.STRING(64),
+        allowNull: false,
+      },
+      image: Sequelize.STRING,
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -77,11 +79,6 @@ module.exports = {
       key: {
         type: Sequelize.STRING(32),
         allowNull: false,
-      },
-      acl: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 1,
       },
       createdAt: {
         allowNull: false,
@@ -138,6 +135,105 @@ module.exports = {
         },
         onDelete: 'cascade',
         onUpdate: 'cascade',
+      },
+      acl: {
+        type: Sequelize.ARRAY(Sequelize.ENUM(['POST', 'GET', 'DELETE', 'PATCH'])),
+        defaultValue: Sequelize.literal(`ARRAY['GET']::"enum_rolePrivilege_acl"[]`),
+        allowNull: false,
+      },
+    });
+    await queryInterface.createTable('accounts', {
+      compoundId: {
+        type: Sequelize.STRING,
+        field: 'compound_id',
+        unique: true,
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        field: 'user_id',
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      },
+      providerType: {
+        type: Sequelize.STRING,
+        field: 'provider_type',
+      },
+      providerId: {
+        type: Sequelize.STRING,
+        field: 'provider_id',
+      },
+      providerAccountId: {
+        type: Sequelize.STRING,
+        field: 'provider_account_id',
+      },
+      refreshToken: {
+        type: Sequelize.STRING,
+        field: 'refresh_token',
+      },
+      accessToken: {
+        type: Sequelize.STRING,
+        field: 'access_token',
+      },
+      accessTokenExpires: {
+        type: Sequelize.DATE,
+        field: 'access_token_expires',
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        field: 'updated_at',
+      },
+    });
+    await queryInterface.createTable('sessions', {
+      userId: {
+        type: Sequelize.INTEGER,
+        field: 'user_id',
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      },
+      expires: {
+        type: Sequelize.DATE,
+      },
+      sessionToken: {
+        type: Sequelize.STRING,
+        field: 'session_token',
+        unique: true,
+      },
+      accessToken: {
+        type: Sequelize.STRING,
+        field: 'access_token',
+        unique: true,
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        field: 'updated_at',
+      },
+    });
+    await queryInterface.createTable('verification_requests', {
+      identitifer: Sequelize.STRING,
+      token: {
+        type: Sequelize.STRING,
+        unique: true,
+      },
+      expires: Sequelize.DATE,
+      createdAt: {
+        type: Sequelize.DATE,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        field: 'updated_at',
       },
     });
   },

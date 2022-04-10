@@ -46,3 +46,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - `npx sequelize-cli db:migrate:undo --config=./src/database/config.json --migrations-path=./src/database/migrations`
 - `npx sequelize-cli db:seed:undo --config=./src/database/config.json --seeders-path=./src/database/seeders`
+
+npx sequelize-cli db:migrate:undo --config=./src/database/config.json --migrations-path=./src/database/migrations
+npx sequelize-cli db:migrate --config=./src/database/config.json --migrations-path=./src/database/migrations
+npx sequelize-cli db:seed:all --config=./src/database/config.json --seeders-path=./src/database/seeders
