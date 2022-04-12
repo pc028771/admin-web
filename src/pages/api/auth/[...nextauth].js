@@ -3,7 +3,7 @@ import NextAuth from 'next-auth';
 import { createHmac } from 'crypto';
 import SequelizeAdapter from '@next-auth/sequelize-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { sequelize, User } from '../../../models';
+import { sequelize, User, Role } from '../../../models';
 import { getUserPrivileges } from '../../../repositories/users';
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 
@@ -19,9 +19,10 @@ export default NextAuth({
       async authorize({ username, password, csrfToken }, req) {
         let hmac = createHmac('sha256', NEXTAUTH_SECRET);
         let hash = hmac.update(password).digest('hex');
+
         return await User.findOne({
           where: { username, hash },
-          raw: true,
+          include: Role,
         });
       },
     }),
@@ -36,7 +37,9 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       let privileges = await getUserPrivileges({ userId: user.id });
-      user = _.merge(token, { privileges });
+      let roles = user.roles.map(({ key }) => key);
+
+      _.merge(token, { roles, privileges }, _.pick(user, ['id', 'name', 'email']));
       return token;
     },
   },

@@ -1,22 +1,20 @@
 import _ from 'lodash';
 import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
+import { isAuthorizedAdmin, isAdminRole, getACL } from '../../lib/auth';
 
-export default withAuth({
-  callbacks: {
-    authorized: async ({ token: { privileges }, req }) => {
-      let { page } = privileges;
-      let {
-        method,
-        nextUrl: { pathname },
-      } = req;
+export default withAuth(
+  function middleware(req) {
+    if (isAuthorizedAdmin(req)) {
+      req.acl = getACL(req);
+      return NextResponse.next();
+    }
 
-      //Check page privilege
-      let privilege = _.filter(page, (acl, key) => pathname.startsWith(key) && acl.includes(method));
-      if (!_.isEmpty(privilege)) {
-        return true;
-      }
-
-      return false;
+    return new Response('Unauthorized', { status: 403 });
+  },
+  {
+    callbacks: {
+      authorized: async ({ token, req }) => isAdminRole(token),
     },
   },
-});
+);
