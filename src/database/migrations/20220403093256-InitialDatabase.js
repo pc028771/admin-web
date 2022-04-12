@@ -73,7 +73,7 @@ module.exports = {
         primaryKey: true,
       },
       type: {
-        type: Sequelize.ENUM(['page', 'api', 'action']),
+        type: Sequelize.ENUM(['page', 'api', 'action', 'admin']),
         allowNull: false,
       },
       key: {
@@ -238,10 +238,7 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('users', { cascade: true });
-    await queryInterface.dropTable('roles', { cascade: true });
-    await queryInterface.dropTable('userRole', { cascade: true });
-    await queryInterface.dropTable('privileges', { cascade: true });
-    await queryInterface.dropTable('rolePrivilege', { cascade: true });
+    await queryInterface.dropAllTables();
+    await queryInterface.dropAllEnums();
   },
 };

@@ -68,22 +68,22 @@ module.exports = {
       queryInterface.bulkInsert('privileges', [
         {
           id: 1,
-          type: 'page',
-          key: '/admin/users',
+          type: 'admin',
+          key: '/users',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           id: 2,
-          type: 'page',
-          key: '/admin/roles',
+          type: 'admin',
+          key: '/roles',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           id: 3,
-          type: 'page',
-          key: '/admin/privileges',
+          type: 'admin',
+          key: '/privileges',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
