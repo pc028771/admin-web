@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import AppBar from '@mui/material/AppBar';
+import { signOut } from 'next-auth/react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -8,13 +8,12 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { getMyProfile } from '../services/user';
 
 const pages = ['Productss', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Account', 'Dashboard'];
 
 export default function AdminAppBar() {
   const { user, isLoading } = getMyProfile();
@@ -125,6 +124,14 @@ export default function AdminAppBar() {
                 <Typography textAlign='center'>{setting}</Typography>
               </MenuItem>
             ))}
+            <MenuItem
+              key='logout'
+              onClick={() => {
+                signOut();
+              }}
+            >
+              <Typography textAlign='center'>登出</Typography>
+            </MenuItem>
           </Menu>
         </Box>
       </Toolbar>

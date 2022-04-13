@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -16,8 +16,10 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import LinearProgress from '@mui/material/LinearProgress';
 import Layout from '../../../components/Layout';
 import { getRelations, getUserById } from '../../../services/user';
+import { getTokenData } from '../../../lib/auth';
 
 export default function UserForm() {
   const {
@@ -25,18 +27,24 @@ export default function UserForm() {
   } = useRouter();
 
   const { user, userRole, isLoading: isUserLoading } = getUserById(id);
-  const { roles, isLoading: isRelLoading } = getRelations();
-  const { control, handleSubmit } = useForm();
+  const { roles = [], isLoading: isRelLoading } = getRelations();
+  const isLoading = isUserLoading || isRelLoading;
+  const { control, handleSubmit, setValue } = useForm({ defaultValues: { name: '', email: '', roles: [] } });
   const onSubmit = useCallback(data => {
     console.log(data);
   });
 
-  if (isUserLoading || isRelLoading) {
-    return 'Loading';
-  }
+  useEffect(() => {
+    fetch(`/api/admin/users/${id}`).then(async response => {
+      let data = await response.json();
+      console.log(data);
+      setValue('name', data.user.name);
+    });
+  }, []);
 
   return (
     <Container maxWidth='md'>
+      {isLoading && <LinearProgress />}
       <Box noValidate autoComplete='off'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2} sx={{ my: 1 }}>
@@ -44,40 +52,10 @@ export default function UserForm() {
               <Typography variant='h4'>編輯使用者</Typography>
             </Grid>
             <Grid item xs={6} md={4}>
-              <Controller
-                name='account'
-                control={control}
-                defaultValue={user.account}
-                rules={{ required: true }}
-                render={({ field }) => <TextField {...field} label='帳號' type='email' fullWidth required />}
-              />
+              <Controller name='email' control={control} rules={{}} render={({ field }) => <TextField {...field} label='Email' fullWidth />} />
             </Grid>
             <Grid item xs={6} md={4}>
-              <Controller
-                name='firstName'
-                control={control}
-                defaultValue={user.firstName}
-                rules={{}}
-                render={({ field }) => <TextField {...field} label='姓' fullWidth />}
-              />
-            </Grid>
-            <Grid item xs={6} md={4}>
-              <Controller
-                name='lastName'
-                control={control}
-                defaultValue={user.lastName}
-                rules={{}}
-                render={({ field }) => <TextField {...field} label='名字' fullWidth />}
-              />
-            </Grid>
-            <Grid item xs={6} md={4}>
-              <Controller
-                name='email'
-                control={control}
-                defaultValue={user.email}
-                rules={{}}
-                render={({ field }) => <TextField {...field} label='Email' fullWidth />}
-              />
+              <Controller name='name' control={control} rules={{}} render={({ field }) => <TextField {...field} label='姓' fullWidth />} />
             </Grid>
             <Grid item xs={6} md={4}>
               <FormControl fullWidth>
@@ -86,7 +64,6 @@ export default function UserForm() {
                   name='roles'
                   control={control}
                   rules={{ required: true }}
-                  defaultValue={userRole}
                   render={({ field }) => {
                     return (
                       <Select
@@ -135,3 +112,4 @@ export default function UserForm() {
 }
 
 UserForm.getLayout = page => <Layout>{page}</Layout>;
+export const getServerSideProps = getTokenData;

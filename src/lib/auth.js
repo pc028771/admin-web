@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { getToken } from 'next-auth/jwt';
 
 export const isAuthorizedAdmin = req => {
   let {
@@ -63,4 +64,14 @@ export const isAdminRole = token => {
   }
 
   return token.roles.includes('admin');
+};
+
+export const getTokenData = async function ({ req }) {
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+    encryption: true,
+  });
+
+  return { props: _.pick(token, ['name', 'roles', 'privileges']) };
 };

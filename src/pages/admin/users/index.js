@@ -80,3 +80,4 @@ export default function UserDataGrid() {
 }
 
 UserDataGrid.getLayout = page => <Layout>{page}</Layout>;
+export const getServerSideProps = getTokenData;
