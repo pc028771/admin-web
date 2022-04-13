@@ -8,6 +8,7 @@ import { getUsers } from '../../../services/user';
 import Layout from '../../../components/Layout';
 import PageLayout from '../../../components/PageLayout';
 import DataGridActions, { renderCell } from '../../../components/DataGridActions';
+import { getTokenData } from '../../../lib/auth';
 
 export default function UserDataGrid() {
   const { mutate } = useSWRConfig();

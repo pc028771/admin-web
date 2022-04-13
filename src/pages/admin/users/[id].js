@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -16,9 +16,9 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import Layout from '../../../components/Layout';
-import { getRelations, getUserById } from '../../../services/user';
+import { getFormData } from '../../../services/user';
 import { getTokenData } from '../../../lib/auth';
 
 export default function UserForm() {
@@ -26,30 +26,43 @@ export default function UserForm() {
     query: { id },
   } = useRouter();
 
-  const { user, userRole, isLoading: isUserLoading } = getUserById(id);
-  const { roles = [], isLoading: isRelLoading } = getRelations();
-  const isLoading = isUserLoading || isRelLoading;
-  const { control, handleSubmit, setValue } = useForm({ defaultValues: { name: '', email: '', roles: [] } });
+  const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const { control, handleSubmit, setValue, getValues } = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      userRole: [],
+    },
+  });
+
   const onSubmit = useCallback(data => {
     console.log(data);
   });
 
-  useEffect(() => {
-    fetch(`/api/admin/users/${id}`).then(async response => {
-      let data = await response.json();
-      console.log(data);
-      setValue('name', data.user.name);
+  useEffect(async () => {
+    let { user, roles } = await getFormData(id);
+    setRoles(roles);
+    setUserRole(user.userRole);
+
+    let fields = _.keys(getValues());
+    _.forEach(fields, key => {
+      setValue(key, user[key]);
     });
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   }, []);
 
   return (
     <Container maxWidth='md'>
-      {isLoading && <LinearProgress />}
       <Box noValidate autoComplete='off'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2} sx={{ my: 1 }}>
             <Grid item xs={12}>
-              <Typography variant='h4'>編輯使用者</Typography>
+              <Typography variant='h4'>編輯使用者 {isLoading && <CircularProgress size={26} />}</Typography>
             </Grid>
             <Grid item xs={6} md={4}>
               <Controller name='email' control={control} rules={{}} render={({ field }) => <TextField {...field} label='Email' fullWidth />} />
@@ -61,7 +74,7 @@ export default function UserForm() {
               <FormControl fullWidth>
                 <InputLabel id='role-label'>群組</InputLabel>
                 <Controller
-                  name='roles'
+                  name='userRole'
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => {
@@ -73,7 +86,7 @@ export default function UserForm() {
                         multiple
                         fullWidth
                         onChange={({ target: { value } }) => {
-                          userRole.splice(0, userRole.length - 1, ...value.sort());
+                          setUserRole([...value]);
                           field.onChange(value);
                         }}
                         renderValue={selected => (

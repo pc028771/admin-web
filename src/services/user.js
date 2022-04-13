@@ -67,3 +67,13 @@ export const updateUser = async newUser => {
     return [...data, newUser];
   });
 };
+
+export const getFormData = async id => {
+  let [resUser, resRel] = await Promise.all([fetch(`/api/admin/users/${id}`), fetch(`/api/admin/users/relations`)]);
+  let { user, userRole } = await resUser.json();
+  _.merge(user, { userRole });
+
+  let { roles } = await resRel.json();
+
+  return { user, roles };
+};
